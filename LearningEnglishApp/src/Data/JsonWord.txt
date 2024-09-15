@@ -1,0 +1,12 @@
+{"word":"go","define":"di"}
+{"word":"walk","define":"di bo"}
+{"word":"stupid","define":"ngu"}
+{"word":"smart","define":"khon"}
+{"word":"run","define":"chay"}
+{"word":"sad","define":"buon"}
+{"word":"word","define":"tu ngu"}
+{"word":"define","define":"dinh nghia"}
+{"word":"cook","define":"nau"}
+{"word":"clean","define":"sach"}
+{"word":"good","define":"tot"}
+{"word":"poo","define":"ia"}
