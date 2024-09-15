@@ -9,16 +9,14 @@ import javafx.fxml.FXML;
 import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
-import javafx.scene.control.Button;
-import javafx.scene.control.Label;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.GridPane;
-import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
+import javafx.scene.shape.Rectangle;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.util.Duration;
@@ -28,8 +26,12 @@ import java.util.ArrayList;
 public class LibraryCardViewController {
     private int a = 0;
     private int b = 0;
-    private CardController cardController = new CardController();
+    private static CardController cardController = new CardController();
+    private static ArrayList<CardModule> cardList = new ArrayList<CardModule>();
+    private static ArrayList<String> wordList = new ArrayList<String>();
 
+    @FXML
+    private ArrayList<StackPane> stackPaneList = new ArrayList<StackPane>();
     @FXML
     private AnchorPane AP;
     @FXML
@@ -37,59 +39,20 @@ public class LibraryCardViewController {
     @FXML
     private Button creareACard;
 
-    @FXML
-    public void libraryCard(ActionEvent event) {// Bam nut de show library card
-        cardController.jsonWordToCardModule();
-        AP.getChildren().remove(library);// xoa nut button
-        for(CardModule c : cardController.getCardList()) {
-            AP.getChildren().add(addCard(c.getWord(), c.getDefine()));
+    static {
+        cardList = cardController.jsonWordToCardModule();
+        for(CardModule c : cardList) {
+            wordList.add(c.getWord());
         }
     }
-
     @FXML
-    public void creatACard(ActionEvent event) { //tao ra mot card moi
-        Stage createCard = new Stage();
-        createCard.initModality(Modality.APPLICATION_MODAL);// bắt người dùng phải bấm ok hoặc cancel để trở về
-        createCard.setTitle("Input New Word");
-
-        Label labelWord = new Label("Word:");
-        Label labelDefine = new Label("Define:");
-
-        TextField textWord = new TextField();// Tạo ra 2 textField để ghi word và define
-        TextField textDefine = new TextField();//
-
-        Button okButton = new Button("OK");
-        Button cancelButton = new Button("Cancel");
-
-        okButton.setOnAction(e -> {
-            String word = textWord.getText();
-            String define = textDefine.getText();
-
-            CardModule newCard = new CardModule();// tạo một card và lưu trữ nó
-            newCard.setWord(word);//
-            newCard.setDefine(define);//
-            cardController.saveCard(newCard);//
-            cardController.getCardList().add(newCard);//
-
-            boolean haveButton = AP.getChildren().contains(library);
-            if(!haveButton)// Kiểm tra xem nút Library đã biến mất chưa nếu Library đã hiển thị thì thêm thẻ mới này vào màn hình
-                AP.getChildren().add(addCard(word, define));//
-            createCard.close();
-        });
-
-        cancelButton.setOnAction(e -> createCard.close());
-
-        GridPane grid = new GridPane();// sắp xếp các thành phần theo hàng và cột
-        grid.add(labelWord, 0 , 0);
-        grid.add(textWord, 1, 0);
-        grid.add(labelDefine, 0, 1);
-        grid.add(textDefine, 1, 1);
-        grid.add(okButton, 0, 2);
-        grid.add(cancelButton, 1, 2);
-
-        Scene createCardScene = new Scene(grid, 300, 150);
-        createCard.setScene(createCardScene);
-        createCard.showAndWait();
+    public void libraryCard(ActionEvent event) {// Bam nut de show library card
+        AP.getChildren().remove(library);// xoa nut button
+        for(CardModule c : cardList) {
+            StackPane pane = addCard(c.getWord(), c.getDefine());
+            AP.getChildren().add(pane);
+            stackPaneList.add(pane);
+        }
     }
 
     public Canvas createCanvas (String word, String define,ImageView card) { // tao canvas de ghi word va define
@@ -109,7 +72,7 @@ public class LibraryCardViewController {
     }
 
     public ImageView createImageCard() {// tao image card
-        ImageView card = new ImageView("Resources/Image/Test.png");
+        ImageView card = new ImageView("Resources/Image/CardImage.png");
         card.setFitWidth(148);
         card.setFitHeight(168);
         card.setX(a);
@@ -124,7 +87,9 @@ public class LibraryCardViewController {
 
         Canvas canvas = createCanvas(word, define, card);
 
-        pane.getChildren().addAll(card,canvas);// dua image card va text vao pane(canvas sẽ nằm đè lên card)
+        CheckBox checkBox = new CheckBox();
+
+        pane.getChildren().addAll(card, canvas);// dua image card va text vao pane(canvas sẽ nằm đè lên card)
 
         a += 148;//vi tri hien thi cua card tiep theo duoc tao ra
         if(a >= 1480) {
@@ -166,4 +131,90 @@ public class LibraryCardViewController {
         gc.fillText(text, x, y);
     }
 
+    @FXML
+    public void creatACard(ActionEvent event) { //tao ra mot card moi
+        Stage createCard = new Stage();
+        createCard.initModality(Modality.APPLICATION_MODAL);// bắt người dùng phải bấm ok hoặc cancel để trở về
+        createCard.setTitle("Input New Word");
+
+        Label labelWord = new Label("Word:");
+        Label labelDefine = new Label("Define:");
+
+        TextField textWord = new TextField();// Tạo ra 2 textField để ghi word và define
+        TextField textDefine = new TextField();//
+
+        Button okButton = new Button("OK");
+        Button cancelButton = new Button("Cancel");
+
+        okButton.setOnAction(e -> inPutWord(textWord.getText(), textDefine.getText(), createCard));
+
+        cancelButton.setOnAction(e -> createCard.close());
+
+        GridPane grid = new GridPane();// sắp xếp các thành phần theo hàng và cột
+        grid.add(labelWord, 0 , 0);
+        grid.add(textWord, 1, 0);
+        grid.add(labelDefine, 0, 1);
+        grid.add(textDefine, 1, 1);
+        grid.add(okButton, 0, 2);
+        grid.add(cancelButton, 1, 2);
+
+        Scene createCardScene = new Scene(grid, 300, 150);
+        createCard.setScene(createCardScene);
+        createCard.showAndWait();
+    }
+
+    public void inPutWord(String word, String define, Stage createCard) {
+        boolean wordAvailable = false;
+        for(String s : wordList) {
+            if(s.equals(word)) {
+                wordAvailable = true;
+            }
+        }
+        if(!wordAvailable) {// nếu thẻ đã tồn tại thì in ra thông báo thẻ đã tồn tại
+            CardModule newCard = cardController.creatCard(word, define);// tạo một card và lưu trữ nó
+            cardController.saveCard(newCard);//
+            cardList.add(newCard);//
+
+            boolean haveButton = AP.getChildren().contains(library);
+            if (!haveButton)// Kiểm tra xem nút Library đã biến mất chưa nếu Library đã hiển thị thì thêm thẻ mới này vào màn hình
+                AP.getChildren().add(addCard(word, define));//
+            createCard.close();
+        }
+        else {
+            Alert alert = new Alert(Alert.AlertType.INFORMATION);
+            alert.setTitle("Thẻ đã có rồi mà !!!");
+            alert.setHeaderText(null); // Không tiêu đề
+            alert.setContentText("Word available");
+
+            // Hiển thị hộp thoại
+            alert.showAndWait();
+        }
+    }
+
+    @FXML
+    public void selectCard(ActionEvent event) {
+        for(StackPane pane : stackPaneList) {
+            CheckBox checkBox = new CheckBox();
+            checkBox.setTranslateX(30); // Đẩy CheckBox sang phải 30 pixel
+            checkBox.setTranslateY(-74);  // Đẩy CheckBox lên trên 74 pixel
+
+            Rectangle dimmingRectangle = new Rectangle();//lớp phủ màu Gray
+            dimmingRectangle.setFill(Color.GRAY.deriveColor(0, 1, 1, 0.5)); // Màu xám với độ trong suốt 50%
+            dimmingRectangle.widthProperty().bind(pane.widthProperty());
+            dimmingRectangle.heightProperty().bind(pane.heightProperty());
+            dimmingRectangle.setVisible(false); // Ẩn lớp phủ ban đầu
+            checkBox.setOnAction(e -> {
+                boolean selected = checkBox.isSelected();
+                dimmingRectangle.setVisible(selected); // Hiển thị lớp phủ nếu CheckBox được chọn
+            });
+
+            pane.getChildren().addAll(dimmingRectangle, checkBox);
+            pane.addEventFilter(javafx.scene.input.MouseEvent.MOUSE_CLICKED, event2 -> {
+                if (!checkBox.isPressed()) {
+                    event2.consume(); // Ngăn chặn sự kiện nếu không phải là CheckBox
+                }
+            });
+        }
+        creareACard.setDisable(true);
+    }
 }

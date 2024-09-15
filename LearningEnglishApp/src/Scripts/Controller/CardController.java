@@ -6,19 +6,13 @@ import Scripts.Module.CardModule;
 import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Scanner;
 
 public class CardController {
-    private ArrayList<CardModule> CardList = new ArrayList<CardModule>();
-
-    public CardModule creatCard()
+    public CardModule creatCard(String word, String define)
     {
         CardModule card = new CardModule();
-        Scanner input = new Scanner(System.in);
-        String word = input.nextLine();
         card.setWord(word);
-        word = input.nextLine();
-        card.setDefine(word);
+        card.setDefine(define);
         return card;
     }
 
@@ -53,7 +47,8 @@ public class CardController {
         }
     }
 
-    public void jsonWordToCardModule() {// Chuyen doi json sang Object
+    public ArrayList<CardModule> jsonWordToCardModule() {// Chuyen doi json sang Object
+        ArrayList<CardModule> CardList = new ArrayList<CardModule>();
         Gson gson = new Gson();
         String filePath = "src/Data/JsonWord.txt"; // Đường dẫn đến file
         try (BufferedReader reader = new BufferedReader(new FileReader(filePath))) {
@@ -65,13 +60,6 @@ public class CardController {
         } catch (IOException e) {
             e.printStackTrace();
         }
-    }
-
-    public ArrayList<CardModule> getCardList() {
         return CardList;
-    }
-
-    public void setCardList(ArrayList<CardModule> cardList) {
-        CardList = cardList;
     }
 }

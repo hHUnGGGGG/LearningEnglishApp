@@ -7,5 +7,6 @@
    <children>
       <Button fx:id="library" layoutX="263.0" layoutY="174.0" mnemonicParsing="false" onAction="#libraryCard" text="Library Card" />
       <Button fx:id="creareACard" layoutX="263.0" layoutY="215.0" mnemonicParsing="false" onAction="#creatACard" text="Creat a Card" />
+      <Button fx:id="selectCardButton" layoutX="266.0" layoutY="256.0" mnemonicParsing="false" onAction="#selectCard" text="Select Card" />
    </children>
 </AnchorPane>

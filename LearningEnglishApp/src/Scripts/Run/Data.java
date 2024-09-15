@@ -7,7 +7,5 @@ public class Data {
     public static void main(String[] args)
     {
         CardController card = new CardController();
-        CardModule word = card.creatCard();
-        card.saveCard(word);
     }
 }
