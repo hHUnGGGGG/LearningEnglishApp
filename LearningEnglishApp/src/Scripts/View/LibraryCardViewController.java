@@ -251,13 +251,16 @@ public class LibraryCardViewController {
             for(int i = 0; i < stackPaneList.size(); i++) {
                 AP.getChildren().remove(stackPaneList.get(i));
                 if (checkBoxes.get(i).isSelected()) {// nếu thẻ đã được chọn thì khi bấm xóa thẻ sẽ biến mất
+                    cardModuleIndex.add(0,i);
                     cardController.deleteCard(cardList.get(i));// xóa dữ liệu của thẻ
-                    cardModuleIndex.add(i);
                 }
                 stackPaneList.get(i).getChildren().removeAll(rectangles.get(i), checkBoxes.get(i));// xóa checkBox và tấm chắn làm mờ
             }
+            System.out.println(cardList.size());
+            for(int i : cardModuleIndex) {
+                cardList.remove(i);// xóa các phần tử đã xóa khỏi cardList
 
-            for(int i : cardModuleIndex) cardList.remove(i);// xóa các phần tử đã xóa khỏi cardList
+            }
             stackPaneList.clear();// xóa toàn bộ stackPaneList
             a = 0;// reset vị trí x của thẻ về 0;
             LoadLibrary();// hiện lại Library
