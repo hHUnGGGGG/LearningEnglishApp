@@ -24,23 +24,25 @@ import javafx.util.Duration;
 import java.util.ArrayList;
 
 public class LibraryCardViewController {
-    private int a = 0;
-    private int b = 0;
+    private int a = 0;// tọa độ x ở màn hình hiển thị của thẻ
+    private int b = 0;// tọa độ y ở màn hình hiển thị của thẻ
     private static CardController cardController = new CardController();
-    private static ArrayList<CardModule> cardList = new ArrayList<CardModule>();
-    private static ArrayList<String> wordList = new ArrayList<String>();
+    private static ArrayList<CardModule> cardList = new ArrayList<CardModule>();// mảng lưu trữ các đối tượng đc lấy từ file dữ liệu
+    private static ArrayList<String> wordList = new ArrayList<String>();// mảng lưu trữ word của các đối tượng trên
 
     @FXML
-    private ArrayList<StackPane> stackPaneList = new ArrayList<StackPane>();
+    private ArrayList<StackPane> stackPaneList = new ArrayList<StackPane>();// mảng lưu trữ các stackPane hiển thị trên màn hình
     @FXML
     private AnchorPane AP;
     @FXML
-    private Button library;
+    private Button library;// nút để show Library
     @FXML
-    private Button creareACard;
+    private Button creareACard;// nút tạo thẻ mới
+    @FXML
+    private Button selectCardButton;// nút lựa chọn thẻ
 
     static {
-        cardList = cardController.jsonWordToCardModule();
+        cardList = cardController.jsonWordToCardModule();//chuyển dữ liệu thành đối tượng rồi lưu vào mảng
         for(CardModule c : cardList) {
             wordList.add(c.getWord());
         }
@@ -48,6 +50,10 @@ public class LibraryCardViewController {
     @FXML
     public void libraryCard(ActionEvent event) {// Bam nut de show library card
         AP.getChildren().remove(library);// xoa nut button
+        LoadLibrary();
+    }
+
+    public void LoadLibrary() {
         for(CardModule c : cardList) {
             StackPane pane = addCard(c.getWord(), c.getDefine());
             AP.getChildren().add(pane);
@@ -174,10 +180,9 @@ public class LibraryCardViewController {
             CardModule newCard = cardController.creatCard(word, define);// tạo một card và lưu trữ nó
             cardController.saveCard(newCard);//
             cardList.add(newCard);//
-
-            boolean haveButton = AP.getChildren().contains(library);
-            if (!haveButton)// Kiểm tra xem nút Library đã biến mất chưa nếu Library đã hiển thị thì thêm thẻ mới này vào màn hình
-                AP.getChildren().add(addCard(word, define));//
+            StackPane pane = addCard(word, define);
+            stackPaneList.add(pane);
+            AP.getChildren().add(pane);//
             createCard.close();
         }
         else {
@@ -193,21 +198,33 @@ public class LibraryCardViewController {
 
     @FXML
     public void selectCard(ActionEvent event) {
-        for(StackPane pane : stackPaneList) {
+        ArrayList<CheckBox> checkBoxes = new ArrayList<CheckBox>();
+        ArrayList<Rectangle> rectangles = new ArrayList<Rectangle>();
+
+        Button deleteCard = new Button("Delete Card");
+        deleteCard.setLayoutX(182);
+        deleteCard.setLayoutY(290);
+
+        Button cancel = new Button("Cancel");
+        cancel.setLayoutX(374);
+        cancel.setLayoutY(290);
+
+        for (StackPane pane : stackPaneList) {
             CheckBox checkBox = new CheckBox();
             checkBox.setTranslateX(30); // Đẩy CheckBox sang phải 30 pixel
             checkBox.setTranslateY(-74);  // Đẩy CheckBox lên trên 74 pixel
 
             Rectangle dimmingRectangle = new Rectangle();//lớp phủ màu Gray
             dimmingRectangle.setFill(Color.GRAY.deriveColor(0, 1, 1, 0.5)); // Màu xám với độ trong suốt 50%
-            dimmingRectangle.widthProperty().bind(pane.widthProperty());
-            dimmingRectangle.heightProperty().bind(pane.heightProperty());
+            dimmingRectangle.setWidth(148);
+            dimmingRectangle.setHeight(168);
             dimmingRectangle.setVisible(false); // Ẩn lớp phủ ban đầu
             checkBox.setOnAction(e -> {
                 boolean selected = checkBox.isSelected();
                 dimmingRectangle.setVisible(selected); // Hiển thị lớp phủ nếu CheckBox được chọn
             });
-
+            checkBoxes.add(checkBox);
+            rectangles.add(dimmingRectangle);
             pane.getChildren().addAll(dimmingRectangle, checkBox);
             pane.addEventFilter(javafx.scene.input.MouseEvent.MOUSE_CLICKED, event2 -> {
                 if (!checkBox.isPressed()) {
@@ -215,6 +232,43 @@ public class LibraryCardViewController {
                 }
             });
         }
+
+        //tạo nút hủy thao tác select
+        AP.getChildren().add(cancel);//thêm vào màn hình nút cancel
+        cancel.setOnAction(event1 -> {//các hành động khi bấm cancel
+            creareACard.setDisable(false);// cho phép người dùng sử dụng nút creat A Card
+            selectCardButton.setDisable(false);// cho phép người dùng sử dụng nút select
+            AP.getChildren().remove(cancel);// xóa nút cancel khỏi màn hình
+            AP.getChildren().remove(deleteCard);
+            for(int i = 0; i < stackPaneList.size(); i++)
+                stackPaneList.get(i).getChildren().removeAll(rectangles.get(i), checkBoxes.get(i));
+        });
+
+        // Tạo nút Delete Card để xóa đi những card được chọn
+        AP.getChildren().add(deleteCard);
+        deleteCard.setOnAction(event2 -> {//các hành động khi bấm Delete Card
+            ArrayList<Integer> cardModuleIndex = new ArrayList<Integer>();// mảng để lưu lại các chỉ số của các thẻ được chọn
+            for(int i = 0; i < stackPaneList.size(); i++) {
+                AP.getChildren().remove(stackPaneList.get(i));
+                if (checkBoxes.get(i).isSelected()) {// nếu thẻ đã được chọn thì khi bấm xóa thẻ sẽ biến mất
+                    cardController.deleteCard(cardList.get(i));// xóa dữ liệu của thẻ
+                    cardModuleIndex.add(i);
+                }
+                stackPaneList.get(i).getChildren().removeAll(rectangles.get(i), checkBoxes.get(i));// xóa checkBox và tấm chắn làm mờ
+            }
+
+            for(int i : cardModuleIndex) cardList.remove(i);// xóa các phần tử đã xóa khỏi cardList
+            stackPaneList.clear();// xóa toàn bộ stackPaneList
+            a = 0;// reset vị trí x của thẻ về 0;
+            LoadLibrary();// hiện lại Library
+
+            creareACard.setDisable(false);// cho phép người dùng sử dụng nút creat A Card
+            selectCardButton.setDisable(false);// cho phép người dùng sử dụng nút select
+            AP.getChildren().remove(cancel);// xóa nút cancel khỏi màn hình
+            AP.getChildren().remove(deleteCard);
+        });
+
         creareACard.setDisable(true);
+        selectCardButton.setDisable(true);
     }
 }

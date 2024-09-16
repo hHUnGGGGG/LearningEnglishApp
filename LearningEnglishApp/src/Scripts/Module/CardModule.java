@@ -4,6 +4,15 @@ public class CardModule {
     private String word;
     private String define;
 
+    public CardModule () {
+
+    }
+
+    public CardModule (String word, String define) {
+        setWord(word);
+        setDefine(define);
+    }
+
     public String getWord() {
         return word;
     }

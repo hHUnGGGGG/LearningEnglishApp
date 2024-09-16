@@ -3,11 +3,11 @@ package Scripts.Controller;
 import com.google.gson.Gson;
 import Scripts.Module.CardModule;
 
-import java.io.*;
 import java.util.ArrayList;
-import java.util.List;
 
 public class CardController {
+    private FileDataController fileDataController = new FileDataController();
+
     public CardModule creatCard(String word, String define)
     {
         CardModule card = new CardModule();
@@ -16,50 +16,53 @@ public class CardController {
         return card;
     }
 
-    public void deleteCard()
+    public void deleteCard(CardModule card)
     {
+        ArrayList<CardModule> cardModules = jsonWordToCardModule();
+        ArrayList<String> Line;
+        CardModule cardModule = new CardModule();
 
+        for(CardModule c : cardModules) {
+            if(c.getWord().equals(card.getWord())) {
+                cardModule = c;
+            }
+        }
+        cardModules.remove(cardModule);
+        Line = CardModuleToJsonWord(cardModules);
+        fileDataController.writeFile(Line);
     }
+
     public void saveCard(CardModule card)
     {
         Gson gson = new Gson();
         String cardData = gson.toJson(card);
-        String filePath = "src/Data/JsonWord.txt";
         ArrayList<String> Line = new ArrayList<String>();
-        try (BufferedReader reader = new BufferedReader(new FileReader(filePath))) {
-            String line;
-            while ((line = reader.readLine()) != null) {
-                Line.add(line);
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        fileDataController.readFile(Line);
 
         Line.add(cardData);
 
-        try (BufferedWriter writer = new BufferedWriter(new FileWriter(filePath))) {
-            for(String word : Line) {
-                writer.write(word);
-                writer.newLine();
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        fileDataController.writeFile(Line);
     }
 
     public ArrayList<CardModule> jsonWordToCardModule() {// Chuyen doi json sang Object
         ArrayList<CardModule> CardList = new ArrayList<CardModule>();
+        ArrayList<String> Line = new ArrayList<String>();
         Gson gson = new Gson();
-        String filePath = "src/Data/JsonWord.txt"; // Đường dẫn đến file
-        try (BufferedReader reader = new BufferedReader(new FileReader(filePath))) {
-            String line;
-            while ((line = reader.readLine()) != null) {
-                CardModule cardData = gson.fromJson(line,CardModule.class);
-                CardList.add(cardData);
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
+        fileDataController.readFile(Line);
+        for(String line : Line) {
+            CardModule cardData = gson.fromJson(line, CardModule.class);
+            CardList.add(cardData);
         }
         return CardList;
+    }
+
+    public ArrayList<String> CardModuleToJsonWord(ArrayList<CardModule> cardList) {
+        ArrayList<String> Line = new ArrayList<String>();
+        Gson gson = new Gson();
+        for(CardModule c : cardList) {
+            String cardData = gson.toJson(c);
+            Line.add(cardData);
+        }
+        return Line;
     }
 }

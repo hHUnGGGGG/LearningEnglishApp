@@ -1,4 +1,3 @@
 {"word":"go","define":"đi"}
 {"word":"run","define":"chay"}
-{"word":"sleep","define":"ngủ"}
-{"word":"cow","define":"bò"}
+{"word":"smart","define":"thộng minh"}

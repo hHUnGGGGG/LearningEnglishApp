@@ -10,13 +10,12 @@ import javafx.scene.Parent;
 public class Main extends Application{
     public void start(Stage primaryStage) throws Exception{
         try {
-            LibraryCardViewController VC = new LibraryCardViewController();
             FXMLLoader loader = new FXMLLoader(Main.class.getResource("/Resources/fxml/Library.fxml"));
             Parent root = loader.load();
-            Scene scene = new Scene(root);
+            Scene scene = new Scene(root, 900, 600);
             primaryStage.setTitle("My JavaFX App");
             primaryStage.setScene(scene);
-            primaryStage.setFullScreen(true);
+            //primaryStage.setFullScreen(true);
             primaryStage.show();
         } catch (Exception e) {
             e.printStackTrace();
