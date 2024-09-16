@@ -1,0 +1,3 @@
+{"word":"go","define":"đi"}
+{"word":"run","define":"chay"}
+{"word":"smart","define":"thộng minh"}
