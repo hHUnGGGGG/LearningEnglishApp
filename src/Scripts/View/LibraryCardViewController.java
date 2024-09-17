@@ -26,35 +26,26 @@ import java.util.ArrayList;
 public class LibraryCardViewController {
     private int a = 0;// tọa độ x ở màn hình hiển thị của thẻ
     private int b = 0;// tọa độ y ở màn hình hiển thị của thẻ
-    private static CardController cardController = new CardController();
-    private static ArrayList<CardModule> cardList = new ArrayList<CardModule>();// mảng lưu trữ các đối tượng đc lấy từ file dữ liệu
-    private static ArrayList<String> wordList = new ArrayList<String>();// mảng lưu trữ word của các đối tượng trên
+    private CardController cardController = new CardController();
+    private ArrayList<CardModule> cardList = new ArrayList<CardModule>();// mảng lưu trữ các đối tượng đc lấy từ file dữ liệu
+    private ArrayList<String> wordList = new ArrayList<String>();// mảng lưu trữ word của các đối tượng trên
+    private ChangeViewController changeViewController = new ChangeViewController();
 
     @FXML
     private ArrayList<StackPane> stackPaneList = new ArrayList<StackPane>();// mảng lưu trữ các stackPane hiển thị trên màn hình
     @FXML
     private AnchorPane AP;
     @FXML
-    private Button library;// nút để show Library
-    @FXML
     private Button creareACard;// nút tạo thẻ mới
     @FXML
     private Button selectCardButton;// nút lựa chọn thẻ
-
-    static {
-        cardList = cardController.jsonWordToCardModule();//chuyển dữ liệu thành đối tượng rồi lưu vào mảng
-        for(CardModule c : cardList) {
-            wordList.add(c.getWord());
-        }
-    }
     @FXML
-    public void libraryCard(ActionEvent event) {// Bam nut de show library card
-        AP.getChildren().remove(library);// xoa nut button
-        LoadLibrary();
-    }
+    private Button exit;
 
     public void LoadLibrary() {
+        cardList = cardController.jsonWordToCardModule();
         for(CardModule c : cardList) {
+            wordList.add(c.getWord());
             StackPane pane = addCard(c.getWord(), c.getDefine());
             AP.getChildren().add(pane);
             stackPaneList.add(pane);
@@ -238,6 +229,7 @@ public class LibraryCardViewController {
         cancel.setOnAction(event1 -> {//các hành động khi bấm cancel
             creareACard.setDisable(false);// cho phép người dùng sử dụng nút creat A Card
             selectCardButton.setDisable(false);// cho phép người dùng sử dụng nút select
+            exit.setDisable(false);
             AP.getChildren().remove(cancel);// xóa nút cancel khỏi màn hình
             AP.getChildren().remove(deleteCard);
             for(int i = 0; i < stackPaneList.size(); i++)
@@ -265,11 +257,17 @@ public class LibraryCardViewController {
 
             creareACard.setDisable(false);// cho phép người dùng sử dụng nút creat A Card
             selectCardButton.setDisable(false);// cho phép người dùng sử dụng nút select
+            exit.setDisable(false);
             AP.getChildren().remove(cancel);// xóa nút cancel khỏi màn hình
             AP.getChildren().remove(deleteCard);
         });
 
         creareACard.setDisable(true);
         selectCardButton.setDisable(true);
+        exit.setDisable(true);
+    }
+    @FXML
+    void ExitToMenu(ActionEvent event) {
+        changeViewController.ReturnToMenu(exit);
     }
 }

@@ -1,3 +1,7 @@
 {"word":"go","define":"đi"}
 {"word":"run","define":"chay"}
 {"word":"smart","define":"thộng minh"}
+{"word":"fly","define":"bay"}
+{"word":"high","define":"cao"}
+{"word":"police","define":"công an"}
+{"word":"cry","define":"khóc"}
