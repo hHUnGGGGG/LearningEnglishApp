@@ -19,7 +19,7 @@ public class ChangeViewController {
 
             // Thay đổi scene
             Stage stage = (Stage) exit.getScene().getWindow();
-            stage.setTitle("Library Card");
+            stage.setTitle("Learning English App");
             stage.setScene(scene);
             stage.show();
         }
