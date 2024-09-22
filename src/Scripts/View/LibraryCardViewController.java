@@ -24,108 +24,34 @@ import javafx.util.Duration;
 import java.util.ArrayList;
 
 public class LibraryCardViewController {
-    private int a = 0;// tọa độ x ở màn hình hiển thị của thẻ
-    private int b = 0;// tọa độ y ở màn hình hiển thị của thẻ
     private CardController cardController = new CardController();
-    private ArrayList<CardModule> cardList = new ArrayList<CardModule>();// mảng lưu trữ các đối tượng đc lấy từ file dữ liệu
-    private ArrayList<String> wordList = new ArrayList<String>();// mảng lưu trữ word của các đối tượng trên
-    private ChangeViewController changeViewController = new ChangeViewController();
+    private CardViewController cardViewController = new CardViewController();
+    private ArrayList<CardModule> cardList;// mảng lưu trữ các đối tượng đc lấy từ file dữ liệu
+    private ArrayList<String> wordList;// mảng lưu trữ word của các đối tượng trên
+    private ExitToMenuViewController exitToMenuViewController = new ExitToMenuViewController();
 
     @FXML
-    private ArrayList<StackPane> stackPaneList = new ArrayList<StackPane>();// mảng lưu trữ các stackPane hiển thị trên màn hình
+    private ArrayList<StackPane> stackPaneList;// mảng lưu trữ các stackPane hiển thị trên màn hình
     @FXML
     private AnchorPane AP;
     @FXML
-    private Button creareACard;// nút tạo thẻ mới
+    private AnchorPane AP1;
+    @FXML
+    private Button createACard;// nút tạo thẻ mới
     @FXML
     private Button selectCardButton;// nút lựa chọn thẻ
     @FXML
     private Button exit;
 
-    public void LoadLibrary() {
-        cardList = cardController.jsonWordToCardModule();
-        for(CardModule c : cardList) {
-            wordList.add(c.getWord());
-            StackPane pane = addCard(c.getWord(), c.getDefine());
+    public void showLibrary() {
+        cardViewController.LoadLibrary(0, 0);
+        cardList = cardViewController.getCardList();
+        wordList = cardViewController.getWordList();
+        stackPaneList = cardViewController.getStackPaneList();
+        AP.setPrefHeight(stackPaneList.size() / 7 * 188 + 1000);
+        for(StackPane pane : stackPaneList) {
             AP.getChildren().add(pane);
-            stackPaneList.add(pane);
         }
-    }
-
-    public Canvas createCanvas (String word, String define,ImageView card) { // tao canvas de ghi word va define
-        Canvas canvas = new Canvas(148, 168);
-        setTextInCanvas(canvas,word);
-        canvas.setOnMouseClicked(mouseEvent -> flip(mouseEvent, card, canvas, word, define));
-        return canvas;
-    }
-
-    public StackPane createPane() {// tao Pane chua card va word
-        StackPane pane = new StackPane();
-        pane.setPrefWidth(148);
-        pane.setPrefHeight(168);
-        pane.setLayoutX(a);
-        pane.setLayoutY(b);
-        return pane;
-    }
-
-    public ImageView createImageCard() {// tao image card
-        ImageView card = new ImageView("Resources/Image/CardImage.png");
-        card.setFitWidth(148);
-        card.setFitHeight(168);
-        card.setX(a);
-        card.setY(b);
-        return card;
-    }
-
-    public StackPane addCard(String word, String define) {// tao ra mot Card
-        StackPane pane = createPane();
-
-        ImageView card = createImageCard();
-
-        Canvas canvas = createCanvas(word, define, card);
-
-        CheckBox checkBox = new CheckBox();
-
-        pane.getChildren().addAll(card, canvas);// dua image card va text vao pane(canvas sẽ nằm đè lên card)
-
-        a += 148;//vi tri hien thi cua card tiep theo duoc tao ra
-        if(a >= 1480) {
-            a = 0;
-            b += 168;
-        }
-
-        return pane;
-    }
-
-    @FXML
-    public void flip(MouseEvent mouseEvent, ImageView card, Canvas canvas, String word, String define) {
-        RotateTransition rotate = new RotateTransition(Duration.seconds(0.15),card);// quay the trong 0,15s
-        if(card.getRotate() ==0 ) { // quay card 180 do
-            rotate.setFromAngle(0);
-            rotate.setToAngle(180);
-            setTextInCanvas(canvas, define);// nếu thẻ đang quay 180 độ thì ghi định nghĩa
-        }
-        else  {
-            rotate.setFromAngle(180);// quay card lai vi tri ban dau
-            rotate.setToAngle(0);
-            setTextInCanvas(canvas, word);// nếu thẻ đang quay lại vị trí ban đầu thì ghi từ
-        }
-        rotate.setAxis(javafx.geometry.Point3D.ZERO.add(0, 1, 0)); // Quay quanh trục Y
-        rotate.play();
-    }
-
-    public void setTextInCanvas(Canvas canvas, String text) {
-        GraphicsContext gc = canvas.getGraphicsContext2D();
-        gc.setFill(Color.RED);
-        gc.clearRect(0, 0, 148, 168); // Xóa nội dung cũ trước khi ghi nội dung mới
-
-        // Tính toán vị trí để căn giữa
-        double wordWidth = gc.getFont().getSize() * text.length() * 0.51; // Ước tính chiều rộng văn bản
-        double x = (canvas.getWidth() - wordWidth) / 2; // Tính tọa độ x
-        double y = canvas.getHeight() / 2; // Tọa độ y
-
-        // Vẽ văn bản lên Canvas
-        gc.fillText(text, x, y);
     }
 
     @FXML
@@ -167,20 +93,22 @@ public class LibraryCardViewController {
                 wordAvailable = true;
             }
         }
-        if(!wordAvailable) {// nếu thẻ đã tồn tại thì in ra thông báo thẻ đã tồn tại
+        if(!wordAvailable && word.matches("[A-Za-z]+")) {// nếu thẻ đã tồn tại thì in ra thông báo thẻ đã tồn tại
             CardModule newCard = cardController.creatCard(word, define);// tạo một card và lưu trữ nó
             cardController.saveCard(newCard);//
             cardList.add(newCard);//
-            StackPane pane = addCard(word, define);
+            int l = stackPaneList.size();
+            StackPane pane = cardViewController.addCard(word, define, (l % 7) * 168, (l/7) * 188);
             stackPaneList.add(pane);
+            AP.setPrefHeight(stackPaneList.size() / 7 * 188 + 1000);
             AP.getChildren().add(pane);//
             createCard.close();
         }
         else {
             Alert alert = new Alert(Alert.AlertType.INFORMATION);
-            alert.setTitle("Thẻ đã có rồi mà !!!");
+            alert.setTitle("Thẻ đã có rồi hoặc từ bạn nhập vào không phải tiếng anh :D");
             alert.setHeaderText(null); // Không tiêu đề
-            alert.setContentText("Word available");
+            alert.setContentText("Can't Create Card");
 
             // Hiển thị hộp thoại
             alert.showAndWait();
@@ -193,16 +121,20 @@ public class LibraryCardViewController {
         ArrayList<Rectangle> rectangles = new ArrayList<Rectangle>();
 
         Button deleteCard = new Button("Delete Card");
-        deleteCard.setLayoutX(182);
-        deleteCard.setLayoutY(290);
+        deleteCard.setLayoutX(0);
+        deleteCard.setLayoutY(620);
+        deleteCard.setPrefWidth(100);
+        deleteCard.setPrefHeight(50);
 
         Button cancel = new Button("Cancel");
-        cancel.setLayoutX(374);
-        cancel.setLayoutY(290);
+        cancel.setLayoutX(180);
+        cancel.setLayoutY(620);
+        cancel.setPrefWidth(100);
+        cancel.setPrefHeight(50);
 
         for (StackPane pane : stackPaneList) {
             CheckBox checkBox = new CheckBox();
-            checkBox.setTranslateX(30); // Đẩy CheckBox sang phải 30 pixel
+            checkBox.setTranslateX(50); // Đẩy CheckBox sang phải 30 pixel
             checkBox.setTranslateY(-74);  // Đẩy CheckBox lên trên 74 pixel
 
             Rectangle dimmingRectangle = new Rectangle();//lớp phủ màu Gray
@@ -214,6 +146,7 @@ public class LibraryCardViewController {
                 boolean selected = checkBox.isSelected();
                 dimmingRectangle.setVisible(selected); // Hiển thị lớp phủ nếu CheckBox được chọn
             });
+
             checkBoxes.add(checkBox);
             rectangles.add(dimmingRectangle);
             pane.getChildren().addAll(dimmingRectangle, checkBox);
@@ -225,49 +158,48 @@ public class LibraryCardViewController {
         }
 
         //tạo nút hủy thao tác select
-        AP.getChildren().add(cancel);//thêm vào màn hình nút cancel
+        AP1.getChildren().add(cancel);//thêm vào màn hình nút cancel
         cancel.setOnAction(event1 -> {//các hành động khi bấm cancel
-            creareACard.setDisable(false);// cho phép người dùng sử dụng nút creat A Card
+            AP.getChildren().clear();
+            AP1.getChildren().removeAll(cancel, deleteCard);
+
+            stackPaneList.clear();// xóa toàn bộ stackPaneList
+            showLibrary();// hiện lại Library
+
+            createACard.setDisable(false);// cho phép người dùng sử dụng nút creat A Card
             selectCardButton.setDisable(false);// cho phép người dùng sử dụng nút select
             exit.setDisable(false);
-            AP.getChildren().remove(cancel);// xóa nút cancel khỏi màn hình
-            AP.getChildren().remove(deleteCard);
-            for(int i = 0; i < stackPaneList.size(); i++)
-                stackPaneList.get(i).getChildren().removeAll(rectangles.get(i), checkBoxes.get(i));
         });
 
         // Tạo nút Delete Card để xóa đi những card được chọn
-        AP.getChildren().add(deleteCard);
+        AP1.getChildren().add(deleteCard);
         deleteCard.setOnAction(event2 -> {//các hành động khi bấm Delete Card
             ArrayList<Integer> cardModuleIndex = new ArrayList<Integer>();// mảng để lưu lại các chỉ số của các thẻ được chọn
+            AP1.getChildren().removeAll(cancel, deleteCard);
             for(int i = 0; i < stackPaneList.size(); i++) {
-                AP.getChildren().remove(stackPaneList.get(i));
+                AP.getChildren().clear();
                 if (checkBoxes.get(i).isSelected()) {// nếu thẻ đã được chọn thì khi bấm xóa thẻ sẽ biến mất
                     cardModuleIndex.add(0,i);
                     cardController.deleteCard(cardList.get(i));// xóa dữ liệu của thẻ
                 }
-                stackPaneList.get(i).getChildren().removeAll(rectangles.get(i), checkBoxes.get(i));// xóa checkBox và tấm chắn làm mờ
             }
             for(int i : cardModuleIndex) {
                 cardList.remove(i);// xóa các phần tử đã xóa khỏi cardList
             }
             stackPaneList.clear();// xóa toàn bộ stackPaneList
-            a = 0;// reset vị trí x của thẻ về 0;
-            LoadLibrary();// hiện lại Library
+            showLibrary();// hiện lại Library
 
-            creareACard.setDisable(false);// cho phép người dùng sử dụng nút creat A Card
+            createACard.setDisable(false);// cho phép người dùng sử dụng nút creat A Card
             selectCardButton.setDisable(false);// cho phép người dùng sử dụng nút select
             exit.setDisable(false);
-            AP.getChildren().remove(cancel);// xóa nút cancel khỏi màn hình
-            AP.getChildren().remove(deleteCard);
         });
 
-        creareACard.setDisable(true);
+        createACard.setDisable(true);
         selectCardButton.setDisable(true);
         exit.setDisable(true);
     }
     @FXML
     void ExitToMenu(ActionEvent event) {
-        changeViewController.ReturnToMenu(exit);
+        exitToMenuViewController.ReturnToMenu(exit);
     }
 }

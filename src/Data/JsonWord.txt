@@ -1,7 +1,31 @@
-{"word":"go","define":"đi"}
-{"word":"run","define":"chay"}
-{"word":"smart","define":"thộng minh"}
 {"word":"fly","define":"bay"}
 {"word":"high","define":"cao"}
 {"word":"police","define":"công an"}
 {"word":"cry","define":"khóc"}
+{"word":"stop","define":"dừng lại"}
+{"word":"cut","define":"cắt"}
+{"word":"nice","define":"hay"}
+{"word":"try","define":"thử"}
+{"word":"eat","define":"ăn"}
+{"word":"sit","define":"ngồi"}
+{"word":"simple","define":"đơn giản"}
+{"word":"head","define":"đầu"}
+{"word":"road","define":"đường"}
+{"word":"super","define":"siêu"}
+{"word":"storm","define":"bão"}
+{"word":"rain","define":"mưa"}
+{"word":"sun","define":"mặt trời"}
+{"word":"personal","define":"cá nhân"}
+{"word":"good","define":"tốt"}
+{"word":"phone","define":"điện thoại"}
+{"word":"love","define":"yêu"}
+{"word":"weak","define":"yếu"}
+{"word":"strong","define":"mạnh"}
+{"word":"stupid","define":"ngu"}
+{"word":"selfish","define":"ích kỉ"}
+{"word":"hungry","define":"đói"}
+{"word":"car","define":"ô tô"}
+{"word":"hold","define":"đợi"}
+{"word":"create","define":"tạo"}
+{"word":"run","define":"chạy"}
+{"word":"fall","define":"rơi"}

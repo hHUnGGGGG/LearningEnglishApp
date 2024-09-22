@@ -1,0 +1,11 @@
+.Button1 {
+    -fx-font-size: 20px;
+    -fx-background-color: #00A3E0;
+    -fx-padding: 5 5 5 5;
+    -fx-font-weight: bold;
+    -fx-text-fill: red;
+}
+
+.backGround1 {
+    -fx-background-color: #FFC700;
+}

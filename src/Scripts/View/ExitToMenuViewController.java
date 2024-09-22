@@ -8,14 +8,15 @@ import javafx.scene.control.Button;
 import javafx.stage.Stage;
 
 
-public class ChangeViewController {
+public class ExitToMenuViewController {
     public void ReturnToMenu(Button exit) {
         try {
             FXMLLoader loader = new FXMLLoader(Main.class.getResource("/Resources/fxml/Menu.fxml"));
             Parent root = loader.load();
 
             MenuViewController menu = loader.getController();
-            Scene scene = new Scene(root, 900, 600);
+            Scene scene = new Scene(root, 1920, 1080);
+            scene.getStylesheets().add(getClass().getResource("/Resources/CSS/Button.css").toExternalForm());
 
             // Thay đổi scene
             Stage stage = (Stage) exit.getScene().getWindow();

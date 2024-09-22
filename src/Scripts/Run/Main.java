@@ -14,8 +14,11 @@ public class Main extends Application{
             FXMLLoader loader = new FXMLLoader(Main.class.getResource("/Resources/fxml/Menu.fxml"));
             Parent root = loader.load();
             Scene scene = new Scene(root, 900, 600);
+            scene.getStylesheets().add(getClass().getResource("/Resources/CSS/Button.css").toExternalForm());
             primaryStage.setTitle("Learning English App");
             primaryStage.setScene(scene);
+            primaryStage.setForceIntegerRenderScale(true);
+            primaryStage.setMaximized(true);
             primaryStage.show();
         } catch (Exception e) {
             e.printStackTrace();
