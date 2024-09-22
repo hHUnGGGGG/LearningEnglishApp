@@ -1,5 +1,6 @@
 package Scripts.Run;
 
+import Scripts.View.ExitToMenuViewController;
 import Scripts.View.LibraryCardViewController;
 import Scripts.View.MenuViewController;
 import javafx.application.Application;
@@ -17,8 +18,7 @@ public class Main extends Application{
             scene.getStylesheets().add(getClass().getResource("/Resources/CSS/Button.css").toExternalForm());
             primaryStage.setTitle("Learning English App");
             primaryStage.setScene(scene);
-            primaryStage.setForceIntegerRenderScale(true);
-            primaryStage.setMaximized(true);
+            primaryStage.setResizable(false);
             primaryStage.show();
         } catch (Exception e) {
             e.printStackTrace();

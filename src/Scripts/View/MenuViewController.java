@@ -24,12 +24,13 @@ public class MenuViewController {
 
             LibraryCardViewController libraryView = loader.getController();
             libraryView.showLibrary();
-            Scene scene = new Scene(root, 1920, 1080);
+            Scene scene = new Scene(root, 900, 600);
 
             // Thay đổi scene
             Stage stage = (Stage) library.getScene().getWindow();
             stage.setTitle("Library Card");
             stage.setScene(scene);
+            stage.setResizable(true);
             stage.show();
         }
         catch (Exception e) {
@@ -45,12 +46,13 @@ public class MenuViewController {
 
             VocabularyViewController vocabularyView = loader.getController();
             vocabularyView.showLearnVocabulary();
-            Scene scene = new Scene(root, 1920, 1080);
+            Scene scene = new Scene(root, 900, 600);
 
             // Thay đổi scene
             Stage stage = (Stage) vocabulary.getScene().getWindow();
             stage.setTitle("Learn Vocabulary");
             stage.setScene(scene);
+            //stage.setMaximized(true);
             stage.show();
         }
         catch (Exception e) {

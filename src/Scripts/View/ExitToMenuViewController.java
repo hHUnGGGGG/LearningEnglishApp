@@ -15,13 +15,14 @@ public class ExitToMenuViewController {
             Parent root = loader.load();
 
             MenuViewController menu = loader.getController();
-            Scene scene = new Scene(root, 1920, 1080);
+            Scene scene = new Scene(root, 900, 600);
             scene.getStylesheets().add(getClass().getResource("/Resources/CSS/Button.css").toExternalForm());
 
             // Thay đổi scene
             Stage stage = (Stage) exit.getScene().getWindow();
             stage.setTitle("Learning English App");
             stage.setScene(scene);
+            stage.setResizable(false);
             stage.show();
         }
         catch (Exception e) {
